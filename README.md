@@ -6,9 +6,7 @@
 
 已知：
 
-<div style="max-width: 200px">
 ![Fluid](docs/liquid.jpg)
-</div>
 
 结论：？
 
