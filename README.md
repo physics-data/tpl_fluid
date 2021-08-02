@@ -5,7 +5,7 @@
 已知：
 
 1. 猫咪走丢了！
-2. ![Fluid](docs/fluid.jpg)
+2. ![Fluid](docs/liquid.jpg)
 
 结论：？
 
