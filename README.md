@@ -6,15 +6,9 @@
 
 已知：
 
-<div class="img-anchor"></div>
-
+<div style="max-width: 200px">
 ![Fluid](docs/liquid.jpg)
-
-<style>
-.img-anchor + img {
-  max-width: 200px;
-}
-</style>
+</div>
 
 结论：？
 
