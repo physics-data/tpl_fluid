@@ -2,10 +2,19 @@
 
 ## 问题背景
 
+前提：猫咪走丢了
+
 已知：
 
-1. 猫咪走丢了！
-2. ![Fluid](docs/liquid.jpg)
+<div class="img-anchor"></div>
+
+![Fluid](docs/liquid.jpg)
+
+<style>
+.img-anchor + img {
+  max-width: 200px;
+}
+</style>
 
 结论：？
 
