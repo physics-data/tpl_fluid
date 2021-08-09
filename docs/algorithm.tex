@@ -29,7 +29,7 @@
 \begin{equation}
 \begin{split}
 \label{eq:base}
-\frac{\partial \mathbf{u}}{\partial t} & = \underbrace{- (\mathbf{u} \cdot \nabla) \mathbf{u}}_1 \underbrace{- \frac{1}{\rho} \nabla p}_2 \underbrace{- \nu \nabla^2 u}_3 + \mathbf{g} \\
+\frac{\partial \mathbf{u}}{\partial t} & = \underbrace{- (\mathbf{u} \cdot \nabla) \mathbf{u}}_1 \underbrace{- \frac{1}{\rho} \nabla p}_2 \underbrace{- \nu \nabla^2 \mathbf{u}}_3 + \mathbf{g} \\
 \nabla \cdot \mathbf{u} & = 0
 \end{split}
 \end{equation}
@@ -90,7 +90,7 @@ $\mathbf{w}$ 是已知的，可以直接计算它的散度，因此这是一个�
 
 \subsection{场的离散表示和算符实现}
 
-模拟的区域为 $x \in (0, h), y \in (0, w)$，计算中储存的所有场都会被离散化为边长为 1 的正方形的格子，存储在 Numpy 数组中。\texttt{f[x][y]} 被定义为场 $f$ 在第 x \textbf{行}，第 y \textbf{列} 的格子\textbf{正中央}的值（见图 \ref{fig:grid}）。
+模拟的区域为 $x \in (0, h), y \in (0, w)$，计算中储存的所有场都会被离散化为边长为 1 的正方形的格子，存储在 Numpy 数组中。\texttt{f[x, y]} 被定义为场 $f$ 在第 x \textbf{行}，第 y \textbf{列} 的格子\textbf{正中央}的值（见图 \ref{fig:grid}）。
 
 \begin{figure}[h!]
   \label{fig:grid}
@@ -127,12 +127,12 @@ $\mathbf{w}$ 是已知的，可以直接计算它的散度，因此这是一个�
 
 \begin{minted}{python}
 grad(f, x, y) = [
-  (f[x+1][y] - f[x-1][y]) / 2,
-  (f[x][y+1] - f[x][y-1]) / 2,
+  (f[x+1, y  ] - f[x-1, y  ]) / 2,
+  (f[x  , y+1] - f[x  , y-1]) / 2,
 ]
-div(f, x, y) =
-      (f[x+1][y] - f[x-1][y])[0] / 2
-    + (f[x][y+1] - f[x][y-1])[1] / 2
+div(f_x, f_y, x, y) =
+      (f_x[x+1, y  ] - f_x[x-1, y  ]) / 2
+    + (f_y[x  , y+1] - f_y[x  , y-1]) / 2
 \end{minted}
 
 你可以使用 \texttt{np.roll} 将整个场进行平移，这样可以并行计算整个场的梯度、散度或者拉普拉斯算符应用后的结果。存在的一个问题是：\texttt{np.roll} 对溢出的行为是循环滚动，这样一侧最靠边的值会被移动到另一侧，这是没有实际物理意义的。
