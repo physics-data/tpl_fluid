@@ -79,7 +79,7 @@ class Fluid:
                 x = center[0] + dx
                 y = center[1] + dy
 
-                if not self.bound_check(x, y):
+                if x < 0 or x >= self.height or y < 0 or y >= self.width:
                     continue
 
                 if np.linalg.norm([dx, dy]) <= r:
