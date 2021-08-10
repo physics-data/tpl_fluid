@@ -271,10 +271,16 @@ def set_boundary(field, factor):
 构造函数 \texttt{f} 非常耗时。可以注意到，$\nu$ 是整个模拟中都不会改变的参数，因此上述线性方程组的等式左侧其实永远不变。因此可以在模拟开始前调用一次 \texttt{utils.build\_poisson\_solver}，把返回的函数保存起来，之后重复使用即可。
 
 \subsection{Projection}
-在 \ref{sec:p-operator} 一节中提到了去除速度场的散度的方法，需要使用你之前实现好的梯度和散度算子。
+在 \ref{sec:p-operator} 一节中提到了去除速度场的散度的方法，需要使用你之前实现好的梯度和散度算子：
+
+\begin{itemize}
+  \item 通过求解泊松方程，计算 Helmholtz-Hodge 分解中的标量场
+  \item 求标量场的梯度，从速度场中减去这部分，即可得到无散的速度场
+\end{itemize}
+
+\texttt{utils.build\_poisson\_solver} 可以用来求解 $\mathbf{q}$。和速度扩散的求解一样，求解函数也同样可以重复使用。
 
 \textbf{注意！}在使用算子前，请一定要使用 \texttt{set\_boundary} 设置好场的边界值。
 
-此外，\texttt{utils.build\_poisson\_solver} 也可以用来求解 $\mathbf{q}$，返回的函数也同样可以重复使用。
 
 \end{document}
