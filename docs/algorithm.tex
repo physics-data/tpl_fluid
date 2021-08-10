@@ -90,7 +90,7 @@ $\mathbf{w}$ 是已知的，可以直接计算它的散度，因此这是一个�
 
 \subsection{场的离散表示和算符实现}
 
-模拟的区域为 $x \in (0, h), y \in (0, w)$，计算中储存的所有场都会被离散化为边长为 1 的正方形的格子，存储在 Numpy 数组中。\texttt{f[x, y]} 被定义为场 $f$ 在第 x \textbf{行}，第 y \textbf{列} 的格子\textbf{正中央}的值（见图 \ref{fig:grid}）。
+模拟的区域为 $x \in (-0.5, h-0.5), y \in (-0.5, w-0.5)$，计算中储存的所有场都会被离散化为边长为 1 的正方形的格子，存储在 Numpy 数组中。\texttt{f[x, y]} 被定义为场 $f$ 在第 x \textbf{行}，第 y \textbf{列} 的格子\textbf{正中央}的值（见图 \ref{fig:grid}）。
 
 \begin{figure}[h!]
   \label{fig:grid}
@@ -242,9 +242,9 @@ def set_boundary(field, factor):
 
 \begin{equation}
   \begin{split}
-    \tilde f(i+\Delta i,j) = & \Delta i \cdot f(i, j) + (1-\Delta i) \cdot f(i + 1, j) \\
-    \tilde f(i+\Delta i,j+1) = & \Delta i \cdot f(i, j+1) + (1-\Delta i) \cdot f(i + 1, j+1) \\
-    \tilde f(i+\Delta i,j + \Delta j) = & \Delta j \cdot \tilde f(i + \Delta i, j) + (1-\Delta j) \cdot \tilde f(i + \Delta i, j + 1)
+    \tilde f(i+\Delta i,j) = & (1-\Delta i) \cdot f(i, j) + \Delta i \cdot f(i + 1, j) \\
+    \tilde f(i+\Delta i,j+1) = & (1-\Delta i) \cdot f(i, j+1) + \Delta i \cdot f(i + 1, j+1) \\
+    \tilde f(i+\Delta i,j + \Delta j) = & (1-\Delta j) \cdot \tilde f(i + \Delta i, j) + \Delta j \cdot \tilde f(i + \Delta i, j + 1)
   \end{split}
 \end{equation}
 
