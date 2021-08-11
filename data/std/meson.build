@@ -4,7 +4,7 @@ project('fluid-std', 'cpp',
                      'cpp_std=c++17'])
 
 rapidjson = dependency('RapidJSON')
-hdf5 = dependency('hdf5', required: true)
+hdf5 = dependency('hdf5', language: 'cpp', required: true)
 
 incdir = include_directories('include/eigen', 'include/misc')
 

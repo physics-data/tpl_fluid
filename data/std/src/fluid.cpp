@@ -9,8 +9,10 @@
 #include <Eigen/SparseCholesky>
 #include <rapidjson/document.h>
 #include <gif.h>
+#include <H5Cpp.h>
 
 using namespace Eigen;
+using namespace H5;
 using namespace std;
 
 typedef SimplicialLDLT<SparseMatrix<double, RowMajor>> Solver;
@@ -126,6 +128,20 @@ double bilinear_interp(const MatrixXd &field, double x, double y) {
   return l * (1 - dy) + r * dy;
 }
 
+template<size_t STACK>
+void write_dataset(DataSet &ds, const MatrixXd mat[STACK]) {
+  size_t height = mat[0].rows();
+  size_t width = mat[0].cols();
+
+  unique_ptr<double[]> buffer(new double[height * width * STACK]);
+  for(size_t i = 0; i < height; ++i)
+    for(size_t j = 0; j < width; ++j)
+      for(size_t s = 0; s < STACK; ++s)
+        buffer[s + (j + i * width) * STACK] = mat[s](i, j);
+
+  ds.write(buffer.get(), PredType::NATIVE_DOUBLE);
+}
+
 class Simulator {
   public:
     Simulator(size_t h, size_t w, double viscosity) :
@@ -224,6 +240,14 @@ class Simulator {
         }
     }
 
+    void write_dyes(DataSet &ds) const {
+      write_dataset<3>(ds, dyes);
+    }
+
+    void write_velocity(DataSet &ds) const {
+      write_dataset<2>(ds, velocity);
+    }
+
   private:
     size_t height, width;
     MatrixXd dyes[3];
@@ -247,9 +271,7 @@ int main(int argc, char **argv) {
 
   FILE *spec_fp = fopen(argv[1], "r");
   char buf[40960];
-  size_t spec_byte = fread(buf, 1, 40960, spec_fp);
-
-  cout<<"fread "<<spec_byte<<endl;
+  fread(buf, 1, 40960, spec_fp);
 
   rapidjson::Document spec;
   spec.Parse(buf);
@@ -300,6 +322,22 @@ int main(int argc, char **argv) {
     sim.write_frame(buffer);
     GifWriteFrame(&gif, buffer.get(), width, height, 3, 8, true);
   }
+
+  H5File hdf5(argv[2], H5F_ACC_TRUNC);
+  hsize_t velocity_dim[] = { height, width, 2 };
+  hsize_t dyes_dim[] = { height, width, 3 };
+
+  DataSpace velocity_space(3, velocity_dim);
+  DataSpace dyes_space(3, dyes_dim);
+
+  FloatType hdf_type(PredType::NATIVE_DOUBLE);
+  hdf_type.setOrder(H5T_ORDER_LE);
+
+  DataSet velocity_set = hdf5.createDataSet("velocity", PredType::NATIVE_DOUBLE, velocity_space);
+  DataSet dyes_set = hdf5.createDataSet("dyes", PredType::NATIVE_DOUBLE, dyes_space);
+
+  sim.write_velocity(velocity_set);
+  sim.write_dyes(dyes_set);
 
   GifEnd(&gif);
 }
