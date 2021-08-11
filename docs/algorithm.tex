@@ -217,6 +217,8 @@ def set_boundary(field, factor):
 \end{split}
 \end{equation}
 
+\textbf{注意！}颜料位于边界外的部分请确保重置为 0，因为这可能会略微影响后续模拟的数值。
+
 由于 $\mathbf{x} - \mathbf{u}_t(x)$ 不一定正好落在整点上，需要进行插值。我们约定采用 \textbf{双线性插值} (Bilinear Interpolation)
 
 \subsubsection{双线性插值}

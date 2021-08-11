@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cstdio>
 #include <cstdlib>
 #include <array>
@@ -160,8 +161,8 @@ class Simulator {
       pair<double, double> accel,
       array<double, 3> inj
     ) {
-      for(ssize_t j = floor(center.second - radius); j < ceil(center.second + radius); ++j)
-        for(ssize_t i = floor(center.first - radius); ceil(i < center.first + radius); ++i) {
+      for(ssize_t j = floor(center.second - radius) - 1; j < ceil(center.second + radius) + 1; ++j)
+        for(ssize_t i = floor(center.first - radius) - 1; i < ceil(center.first + radius) + 1; ++i) {
           if(i < 0 || i >= (ssize_t) height || j < 0 || j >= (ssize_t) width) continue;
 
           const double dx = i - center.first;
@@ -192,8 +193,10 @@ class Simulator {
             advected_dyes[dye](i, j) = bilinear_interp(dyes[dye], orig_x, orig_y);
         }
 
-      for(int dim = 0; dim < 3; ++dim)
+      for(int dim = 0; dim < 3; ++dim) {
+        copy_to_boundary(advected_dyes[dim], 0); // Set dye outside of boundary to zero
         dyes[dim] = advected_dyes[dim];
+      }
 
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(advected_velocity[dim], -1);
 
@@ -215,7 +218,7 @@ class Simulator {
       };
 
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(diffused_velocity[dim], -1);
-
+      
       // Projection
       // cout<<"Projection..."<<endl;
       MatrixXd div = divergence<Map<MatrixXd>>(diffused_velocity);

@@ -37,7 +37,7 @@ def main():
         # Render GIF
         if ENABLE_GIF:
             frames.append(Image.fromarray(
-                (np.transpose(sim.dyes) * 255).astype('uint8')
+                (np.transpose(sim.dyes, (1, 2, 0)) * 255).astype('uint8')
             ))
             frames[0].save('output.gif', save_all=True, append_images=frames[1:], duration=20, loop=0)
 
@@ -59,10 +59,10 @@ class Fluid:
         self.width = width
 
         # Velocity field, self.velocity[0] is the x-component, self.velocity[1] is the y-component
-        self.velocity = np.zeros((2, height, width), dtype=float)
+        self.velocity = np.zeros((2, height, width), dtype=np.double)
 
         # Dye density field. Has a maximum value of 1. Corresponding to RBG colors.
-        self.dyes = np.zeros((3, height, width), dtype=float)
+        self.dyes = np.zeros((3, height, width), dtype=np.double)
 
         self.viscosity = viscosity
 
@@ -112,6 +112,10 @@ class Fluid:
         advected_dyes = self.dyes # Change me
 
         self.dyes = advected_dyes
+
+        # Reset dye density field outside the boundary
+        for dim in range(0, 2):
+            self.copy_to_boundary(self.dyes[dim], 0)
 
         # TODO(Chapter 3.1.1): Ensures boundary conditions for our velocity field
         for dim in range(0, 2):

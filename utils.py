@@ -38,7 +38,7 @@ def build_diffusor(height, width, boundary_scale, self_factor = 1):
             col.append(curidx)
 
     cnt = width * height
-    return csc_matrix((data, (row, col)), shape=(cnt, cnt))
+    return csc_matrix((data, (row, col)), shape=(cnt, cnt), dtype=np.double)
 
 def build_poisson_solver(height, width, r, s, factor):
     mat = build_diffusor(height, width, factor, 1 - r / s)
