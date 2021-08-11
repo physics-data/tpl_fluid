@@ -16,6 +16,10 @@ def scoring(r, r_std):
 
 def compare_dataset(ans, std):
     if ans.shape != std.shape:
+        print("Wrong dataset shape, expecting:")
+        print(std.shape)
+        print("...but got:")
+        print(ans.shape)
         return 0
 
     tot = 0;
@@ -32,5 +36,13 @@ def compare_dataset(ans, std):
 
     return tot / cnt
 
-print(compare_dataset(output.get('velocity'), std.get('velocity')))
-print(compare_dataset(output.get('dyes'), std.get('dyes')))
+vs = compare_dataset(output.get('velocity'), std.get('velocity'))
+print("Velocity average score: ", vs)
+ds = compare_dataset(output.get('dyes'), std.get('dyes'))
+print("Dyes average score: ", ds)
+
+ts = (vs + ds) / 2
+print("Final score: ", ts)
+
+with open(sys.argv[3], 'w') as verdict:
+    verdict.write(str(ts))
