@@ -37,12 +37,12 @@ def compare_dataset(ans, std):
     return tot / cnt
 
 vs = compare_dataset(output.get('velocity'), std.get('velocity'))
-print("Velocity average score: ", vs)
+print("Velocity average score: ", vs, " / 1.0")
 ds = compare_dataset(output.get('dyes'), std.get('dyes'))
-print("Dyes average score: ", ds)
+print("Dyes average score: ", ds, " / 1.0")
 
 ts = (vs + ds) / 2
-print("Final score: ", ts)
+print("Final score: ", ts, " / 1.0")
 
 with open(sys.argv[3], 'w') as verdict:
     verdict.write(str(ts))
