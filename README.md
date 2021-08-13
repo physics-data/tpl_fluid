@@ -19,7 +19,7 @@
 3. 完成每个时间片内的模拟逻辑，更新格点上的流体速度和压强，溶质的浓度。
 4. 模拟一定步数后，将每个格点的流体速度，溶质的浓度输出到 `output.hdf5` 文件中。
 
-模板代码位于 `fluid.example.py`，请先将其重命名为 `fluid.py`，随后将其中标有 `# TODO` 的部分替换为相应的代码。算法和输入输出格式说明位于 `docs/detail.pdf`， `TODO` 注释中带有的**编号**和 `docs/detail.pdf` 中的**章节号**对应，请仔细阅读。
+模板代码位于 `fluid.example.py`，请先将其重命名为 `fluid.py`，随后将其中标有 `# TODO` 的部分替换为相应的代码。算法详细说明位于 `docs/algorithm.pdf`， `TODO` 注释中带有的**编号**和 `docs/algorithm.pdf` 中的**章节号**对应，请仔细阅读。
 
 输入输出格式说明见 `docs/file.md`。
 
