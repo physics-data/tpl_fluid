@@ -23,6 +23,8 @@
 
 输入输出格式说明见 `docs/file.md`。
 
+**注意！**本题如果你的程序执行成功了，Action 的状态就会是通过（对勾）。这不意味着你拿到了满分。请查看 Action Build Log 来了解具体获得的分数。
+
 ## 依赖
 
 默认情况下，模板代码会根据每个时间片的模拟结果输出一个 GIF 文件。这需要一个额外的依赖，可以通过以下方式安装：
@@ -46,10 +48,12 @@ def scoring(r, r_std):
 
   if ratio < THRESHOLD:
     return 1
-  return 0.1 ** (-(1 + THRESHOLD) * ratio + THRESDHOLD)
+  return 0.1 ** ((ratio - THRESHOLD) / (1 - THRESHOLD))
 ```
 
 也就是如果相对误差在 Threshold = 1% 以内给 100% 的分数，相对误差在 100% 的时候给 10% 的分数。最后 `velocity` 数据集的平均得分站一半分数，`dyes` 数据集的平均得分占一半分数。
+
+**注意！**本题如果你的程序执行成功了，Action 的状态就会是通过（对勾）。这不意味着你拿到了满分。请查看 Action Build Log 来了解具体获得的分数。
 
 本题分数构成为：
 
@@ -59,3 +63,10 @@ def scoring(r, r_std):
 本题不设置运行时间、空间限制。
 
 助教以 deadline 前 GitHub 上最后一次提交为准进行评测。
+
+## 调试
+在 `data` 目录中有数个 `animation.*.gif` 文件，这是标程输出的 GIF。请注意，标程采取的 GIF 压缩算法和速度可能和 PIL 有微妙的不同，所以如果 GIF 有一点点差距，可能你的输出和标准答案是完全一致的。
+
+在 `data/steps.1` 目录中有 `input.1.json` 输入对应的，各步中各变换之后标程的场的内容。例如 `23.advection.hdf5` 代表在 step=23 时，Advection 之后的场的内容。额外的，`23.before.hdf5` 代表 step=23 的模拟刚开始时（splat 之后）的场的内容。这些数据也许有助于你调试。
+
+最后，在 `data/std` 目录中有 C++ 写的标程，可以用来对照你的实现，或者生成更多输出。相关信息请阅读 `data/std/README.md`。

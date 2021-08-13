@@ -39,7 +39,7 @@ def main():
             frames.append(Image.fromarray(
                 (np.transpose(sim.dyes, (1, 2, 0)) * 255).astype('uint8')
             ))
-            frames[0].save('output.gif', save_all=True, append_images=frames[1:], duration=20, loop=0)
+            frames[0].save('output.gif', save_all=True, append_images=frames[1:], duration=30, loop=0)
 
     print("Done!")
 
