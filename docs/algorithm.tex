@@ -8,6 +8,7 @@
 \usepackage{tikz}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage[normalem]{ulem}
 
 \title{简单流体模拟算法（魔改版）}
 \author{TAs}
@@ -39,7 +40,7 @@
 \begin{description}
   \item[1 Advection] 表示随流体本身的流动，把某一处的速度带到相邻位置
   \item[2 Pressure] 表示局部的压强不均导致的速度变化
-  \item[3 Diffusion] 表示因为流体粘度带来的局部的速度扩散
+  \item[3 Diffusion] 表示因为流体粘度带来的局部的速度扩散，$\nu$ 是粘度系数 kinematic viscosity
 \end{description}
 
 为了求以上方程的数值解，在这里需要用到一个数学结论：\textit{Helmholtz-Hodge 分解} 称任意向量场都可以被唯一分解为以下形式：
@@ -87,6 +88,8 @@ $\mathbf{w}$ 是已知的，可以直接计算它的散度，因此这是一个�
 在解得 $q$ 以后，$\mathbf{w_n} = \mathbf{w} - \nabla q$。
 
 \section{实现细节}
+
+首先，由于缩放时间相当于量纲变换，我们约定模拟的时间片长度为 1。下文中所有的 $\Delta t = 1$
 
 \subsection{场的离散表示和算符实现}
 
@@ -197,7 +200,7 @@ div(f_x, f_y, x, y) =
 在 \ref{sec:p-operator} 提及了计算 $\mathsf{P}$ 算子的方法，其中会需要标量场 $q$ 计算梯度。$q$ 的边界条件是垂直于边界方向的变化率为 0，因此需要直接把模拟域内部的值复制到边界外。以上两个过程很类似，可以实现为同一个函数：
 
 \begin{minted}{text}
-def set_boundary(field, factor):
+def copy_to_boundary(field, factor):
   field 的第一行 <- field 的第二行 * factor
   field 的最后一行 <- field 的倒数第二行 * factor
   field 的第一列 <- field 的第二列 * factor
@@ -268,7 +271,7 @@ def set_boundary(field, factor):
 
 其中 $\mathbf{x}$ 和 $\mathbf{b}$ 是二维标量场，$r$ 和 $s$ 是参数。
 
-使用方法是调用 \texttt{utils.build\_poisson\_solver(height, width, r, s, factor)}, 其中 \texttt{factor} 的含义和 \texttt{set\_boundary} 中相同。上述调用会返回一个函数 \texttt{f}，当你需要求解的时候，你需要将场 $\mathbf{b}$ 形状变为 \textbf{长 \texttt{width * height} 的一维向量}，传入 \texttt{f}，f 会返回一个 \textbf{长 \texttt{width * height} 的一维向量}，代表解得的 $\mathbf{x}$，你需要将其变回原来的形状。
+使用方法是调用 \texttt{utils.build\_poisson\_solver(height, width, r, s, factor)}, 其中 \texttt{factor} 的含义和 \texttt{copy\_to\_boundary} 中相同。上述调用会返回一个函数 \texttt{f}，当你需要求解的时候，你需要将场 $\mathbf{b}$ 形状变为 \textbf{长 \texttt{width * height} 的一维向量}，传入 \texttt{f}，f 会返回一个 \textbf{长 \texttt{width * height} 的一维向量}，代表解得的 $\mathbf{x}$，你需要将其变回原来的形状。
 
 构造函数 \texttt{f} 非常耗时。可以注意到，$\nu$ 是整个模拟中都不会改变的参数，因此上述线性方程组的等式左侧其实永远不变。因此可以在模拟开始前调用一次 \texttt{utils.build\_poisson\_solver}，把返回的函数保存起来，之后重复使用即可。
 
@@ -282,7 +285,13 @@ def set_boundary(field, factor):
 
 \texttt{utils.build\_poisson\_solver} 可以用来求解 $\mathbf{q}$。和速度扩散的求解一样，求解函数也同样可以重复使用。
 
-\textbf{注意！}在使用算子前，请一定要使用 \texttt{set\_boundary} 设置好场的边界值。
+回忆这个方程的边界条件是标量场在垂直边界方向的变化率为 0，也就是 $\frac{\partial q}{\partial \mathbf{n}} = 0$。为了达成这点，请确保：
 
+\begin{itemize}
+  \item 在构造 Solver 的时候传入正确的 boundary factor
+  \item 在求解结束之后，求梯度之前，使用 \texttt{copy\_to\_boundary} 确保这点。
+\end{itemize}
+
+\textbf{注意！}在其他地方使用算子前，也一定要使用 \texttt{copy\_to\_boundary} 设置好场的边界值。
 
 \end{document}
