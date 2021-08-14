@@ -67,6 +67,6 @@ def scoring(r, r_std):
 ## 调试
 在 `data` 目录中有数个 `animation.*.gif` 文件，这是标程输出的 GIF。请注意，标程采取的 GIF 压缩算法和速度可能和 PIL 有微妙的不同，所以如果 GIF 有一点点差距，可能你的输出和标准答案是完全一致的。
 
-在 `data/steps.1` 目录中有 `input.1.json` 输入对应的，各步中各变换之后标程的场的内容。例如 `23.advection.hdf5` 代表在 step=23 时，Advection 之后的场的内容。额外的，`23.before.hdf5` 代表 step=23 的模拟刚开始时（splat 之后）的场的内容。这些数据也许有助于你调试。
+在 https://lab.cs.tsinghua.edu.cn/physics-data/fluid/steps.1.tar.gz 压缩文件中有 `input.1.json` 输入对应的，各步中各变换之后标程的场的内容。例如 `23.advection.hdf5` 代表在 step=23 时，Advection 之后的场的内容。额外的，`23.before.hdf5` 代表 step=23 的模拟刚开始时（splat 之后）的场的内容。这些数据也许有助于你调试。具体的输出的位置见标程的源码。
 
 最后，在 `data/std` 目录中有 C++ 写的标程，可以用来对照你的实现，或者生成更多输出。相关信息请阅读 `data/std/README.md`。

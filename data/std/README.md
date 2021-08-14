@@ -15,6 +15,8 @@
 sudo pip3 install meson
 sudo apt install ninja g++ libhdf5-cpp-103 rapidjson-dev
 
+git submodule update --init --recursive
+
 meson builddir --buildtype=release
 ninja -C builddir
 ```

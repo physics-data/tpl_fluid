@@ -12,6 +12,8 @@
 #include <gif.h>
 #include <H5Cpp.h>
 
+// #define AUX_HDF_OUTPUT
+
 using namespace Eigen;
 using namespace H5;
 using namespace std;
@@ -176,7 +178,13 @@ class Simulator {
         }
     }
 
-    void step() {
+    void step(size_t t) {
+
+#ifdef AUX_HDF_OUTPUT
+      string name = string("aux/") + to_string(t) + ".before.hdf5";
+      output_hdf(name.c_str());
+#endif
+
       // Advection
       // cout<<"Advection..."<<endl;
       MatrixXd advected_velocity[2] = {{height, width}, {height, width}};
@@ -200,6 +208,11 @@ class Simulator {
 
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(advected_velocity[dim], -1);
 
+#ifdef AUX_HDF_OUTPUT
+      name = string("aux/") + to_string(t) + ".advection.hdf5";
+      output_hdf(name.c_str());
+#endif
+
       // Diffusion
       // cout<<"Diffusion..."<<endl;
       Map<VectorXd> velocity_views[2]{
@@ -218,6 +231,11 @@ class Simulator {
       };
 
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(diffused_velocity[dim], -1);
+
+#ifdef AUX_HDF_OUTPUT
+      name = string("aux/") + to_string(t) + ".diffusion.hdf5";
+      output_hdf(name.c_str());
+#endif
       
       // Projection
       // cout<<"Projection..."<<endl;
@@ -232,6 +250,11 @@ class Simulator {
         velocity[dim] = diffused_velocity[dim] - grad[dim];
 
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(velocity[dim], -1);
+
+#ifdef AUX_HDF_OUTPUT
+      name = string("aux/") + to_string(t) + ".projection.hdf5";
+      output_hdf(name.c_str());
+#endif
     }
 
     void write_frame(unique_ptr<uint8_t[]> &buffer) const {
@@ -249,6 +272,24 @@ class Simulator {
 
     void write_velocity(DataSet &ds) const {
       write_dataset<2>(ds, velocity);
+    }
+
+    void output_hdf(const char *dest) {
+      H5File hdf5(dest, H5F_ACC_TRUNC);
+      hsize_t velocity_dim[] = { height, width, 2 };
+      hsize_t dyes_dim[] = { height, width, 3 };
+
+      DataSpace velocity_space(3, velocity_dim);
+      DataSpace dyes_space(3, dyes_dim);
+
+      FloatType hdf_type(PredType::NATIVE_DOUBLE);
+      hdf_type.setOrder(H5T_ORDER_LE);
+
+      DataSet velocity_set = hdf5.createDataSet("velocity", PredType::NATIVE_DOUBLE, velocity_space);
+      DataSet dyes_set = hdf5.createDataSet("dyes", PredType::NATIVE_DOUBLE, dyes_space);
+
+      write_velocity(velocity_set);
+      write_dyes(dyes_set);
     }
 
   private:
@@ -320,27 +361,13 @@ int main(int argc, char **argv) {
         sim.splat(s.c, s.r, s.a, s.d);
     }
 
-    sim.step();
+    sim.step(t);
 
     sim.write_frame(buffer);
     GifWriteFrame(&gif, buffer.get(), width, height, 3, 8, true);
   }
 
-  H5File hdf5(argv[2], H5F_ACC_TRUNC);
-  hsize_t velocity_dim[] = { height, width, 2 };
-  hsize_t dyes_dim[] = { height, width, 3 };
-
-  DataSpace velocity_space(3, velocity_dim);
-  DataSpace dyes_space(3, dyes_dim);
-
-  FloatType hdf_type(PredType::NATIVE_DOUBLE);
-  hdf_type.setOrder(H5T_ORDER_LE);
-
-  DataSet velocity_set = hdf5.createDataSet("velocity", PredType::NATIVE_DOUBLE, velocity_space);
-  DataSet dyes_set = hdf5.createDataSet("dyes", PredType::NATIVE_DOUBLE, dyes_space);
-
-  sim.write_velocity(velocity_set);
-  sim.write_dyes(dyes_set);
+  sim.output_hdf(argv[2]);
 
   GifEnd(&gif);
 }
