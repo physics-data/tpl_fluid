@@ -235,8 +235,8 @@ def copy_to_boundary(field, factor):
     \draw (0,0) +(-2,-2) rectangle ++(2,2);
     \node at (0.2,-0.4) [label=above:{$\tilde f(i+\Delta i,j+\Delta j)$},circle,fill,inner sep=1.5pt] {};
     \node at (-2,2.3) {\texttt{f[i,j]}};
-    \node at (-2,-2.3) {\texttt{f[i,j+1]}};
-    \node at (2,2.3) {\texttt{f[i+1,j]}};
+    \node at (-2,-2.3) {\texttt{f[i+1,j]}};
+    \node at (2,2.3) {\texttt{f[i,j+1]}};
     \node at (2,-2.3) {\texttt{f[i+1,j+1]}};
 
     \draw [dotted] (-2,-0.4) -- (2,-0.4);
@@ -266,12 +266,12 @@ def copy_to_boundary(field, factor):
 助教在 \texttt{utils.py} 中提供了一个求解以下形式线性方程组的函数：
 
 \begin{equation}
-(r \textbf{I} + s \nabla^2) \mathbf{x} = \mathbf{b}
+(r \textbf{I} + s \nabla^2) x = b
 \end{equation}
 
-其中 $\mathbf{x}$ 和 $\mathbf{b}$ 是二维标量场，$r$ 和 $s$ 是参数。
+其中 $x$ 和 $b$ 是二维标量场，$r$ 和 $s$ 是参数。
 
-使用方法是调用 \texttt{utils.build\_poisson\_solver(height, width, r, s, factor)}, 其中 \texttt{factor} 的含义和 \texttt{copy\_to\_boundary} 中相同。上述调用会返回一个函数 \texttt{f}，当你需要求解的时候，你需要将场 $\mathbf{b}$ 形状变为 \textbf{长 \texttt{width * height} 的一维向量}，传入 \texttt{f}，f 会返回一个 \textbf{长 \texttt{width * height} 的一维向量}，代表解得的 $\mathbf{x}$，你需要将其变回原来的形状。
+使用方法是调用 \texttt{utils.build\_poisson\_solver(height, width, r, s, factor)}, 其中 \texttt{factor} 的含义和 \texttt{copy\_to\_boundary} 中相同。上述调用会返回一个函数 \texttt{f}，当你需要求解的时候，你需要将场 $b$ 形状变为 \textbf{长 \texttt{width * height} 的一维向量}，传入 \texttt{f}，f 会返回一个 \textbf{长 \texttt{width * height} 的一维向量}，代表解得的 $x$，你需要将其变回原来的形状。
 
 构造函数 \texttt{f} 非常耗时。可以注意到，$\nu$ 是整个模拟中都不会改变的参数，因此上述线性方程组的等式左侧其实永远不变。因此可以在模拟开始前调用一次 \texttt{utils.build\_poisson\_solver}，把返回的函数保存起来，之后重复使用即可。
 
