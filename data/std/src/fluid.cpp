@@ -13,6 +13,7 @@
 #include <H5Cpp.h>
 
 // #define AUX_HDF_OUTPUT
+#define ENABLE_GIF
 
 using namespace Eigen;
 using namespace H5;
@@ -183,6 +184,8 @@ class Simulator {
 #ifdef AUX_HDF_OUTPUT
       string name = string("aux/") + to_string(t) + ".before.hdf5";
       output_hdf(name.c_str());
+#else
+      (void) t;
 #endif
 
       // Advection
@@ -308,10 +311,17 @@ typedef struct {
 } Splat; 
 
 int main(int argc, char **argv) {
+#ifdef ENABLE_GIF
   if(argc != 4) {
     cout<<"Usage: fluid_sim <input> <hdf_output> <gif_output>";
     return -1;
   }
+#else
+  if(argc != 3) {
+    cout<<"Usage: fluid_sim <input> <hdf_output>";
+    return -1;
+  }
+#endif
 
   FILE *spec_fp = fopen(argv[1], "r");
   char buf[40960];
@@ -349,10 +359,12 @@ int main(int argc, char **argv) {
 
   Simulator sim(height, width, viscosity);
 
+#ifdef ENABLE_GIF
   GifWriter gif;
   GifBegin(&gif, argv[3], width, height, 3, 8, true);
 
   unique_ptr<uint8_t[]> buffer(new uint8_t[width * height * 4]);
+#endif
 
   for(size_t t = 0; t < time; ++t) {
     cout<<"Time: "<<t<<endl;
@@ -363,12 +375,16 @@ int main(int argc, char **argv) {
 
     sim.step(t);
 
+#ifdef ENABLE_GIF
     sim.write_frame(buffer);
     GifWriteFrame(&gif, buffer.get(), width, height, 3, 8, true);
+#endif
   }
 
   sim.output_hdf(argv[2]);
 
+#ifdef ENABLE_GIF
   GifEnd(&gif);
+#endif
 }
 
