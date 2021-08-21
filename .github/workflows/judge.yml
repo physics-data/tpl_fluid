@@ -9,8 +9,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Check file existence
         run: test -f ./fluid.py
-      - name: Run judger
-        run: ./scripts/judge.sh
+      - name: Run judger + grader
+        run: ./scripts/grade.sh
       - name: Upload verdict
         if: always()
         uses: actions/upload-artifact@v2
