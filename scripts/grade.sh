@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./scripts/judge.sh
-./scripts/judge_consume.py verdicts/*
+./scripts/judge_consume.sh
