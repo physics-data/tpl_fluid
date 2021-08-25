@@ -212,6 +212,7 @@ class Simulator {
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(advected_velocity[dim], -1);
 
 #ifdef AUX_HDF_OUTPUT
+      for(int dim = 0; dim < 2; ++dim) velocity[dim] = advected_velocity[dim];
       name = string("aux/") + to_string(t) + ".advection.hdf5";
       output_hdf(name.c_str());
 #endif
@@ -236,6 +237,7 @@ class Simulator {
       for(int dim = 0; dim < 2; ++dim) copy_to_boundary(diffused_velocity[dim], -1);
 
 #ifdef AUX_HDF_OUTPUT
+      for(int dim = 0; dim < 2; ++dim) velocity[dim] = diffused_velocity[dim];
       name = string("aux/") + to_string(t) + ".diffusion.hdf5";
       output_hdf(name.c_str());
 #endif
