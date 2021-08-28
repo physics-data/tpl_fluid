@@ -1,8 +1,7 @@
 #!/bin/bash
 
-SCRIPT_PATH=$(readlink -f "${BASH_SOURCE[0]}")
-DN="$(dirname "$SCRIPT_PATH")"
-cd "${DN}/../"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cd "${SCRIPT_DIR}/../"
 
 rm -rf verdicts
 mkdir verdicts
