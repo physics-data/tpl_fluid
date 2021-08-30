@@ -30,7 +30,7 @@
 \begin{equation}
 \begin{split}
 \label{eq:base}
-\frac{\partial \mathbf{u}}{\partial t} & = \underbrace{- (\mathbf{u} \cdot \nabla) \mathbf{u}}_1 \underbrace{- \frac{1}{\rho} \nabla p}_2 \underbrace{- \nu \nabla^2 \mathbf{u}}_3 + \mathbf{g} \\
+\frac{\partial \mathbf{u}}{\partial t} & = \underbrace{- (\mathbf{u} \cdot \nabla) \mathbf{u}}_1 \underbrace{- \frac{1}{\rho} \nabla p}_2 \underbrace{+ \nu \nabla^2 \mathbf{u}}_3 + \mathbf{g} \\
 \nabla \cdot \mathbf{u} & = 0
 \end{split}
 \end{equation}
@@ -54,7 +54,7 @@
 
 \begin{equation}
 \mathsf{P}(\frac{\partial \mathbf{u}}{\partial t})
-= \mathsf{P}(- (\mathbf{u} \cdot \nabla) \mathbf{u} - \frac{1}{\rho} \nabla p - \nu \nabla^2 u)
+= \mathsf{P}(- (\mathbf{u} \cdot \nabla) \mathbf{u} - \frac{1}{\rho} \nabla p + \nu \nabla^2 u)
 \end{equation}
 
 其中，由于 $\nabla \cdot \mathbf{u} = 0$，而 $\nabla p$ 本身就是一个梯度场，因此 $\mathsf{P}(\frac{\partial \mathbf{u}}{\partial t}) = \frac{\partial \mathbf{u}}{\partial t}$, $\mathsf{P} (\nabla p = 0)$ \footnote{
@@ -64,7 +64,7 @@
 \begin{equation}
 \label{eq:simple}
 \frac{\partial \mathbf{u}}{\partial t}
-= \mathsf{P}(- (\mathbf{u} \cdot \nabla) \mathbf{u} - \nu \nabla^2 u)
+= \mathsf{P}(- (\mathbf{u} \cdot \nabla) \mathbf{u} + \nu \nabla^2 u)
 \end{equation}
 
 根据方程 \ref{eq:simple} 可以构造数值模拟算法，将连续时间切分为时间片，在每个时间片内分为以下几步:
@@ -119,7 +119,7 @@ $\mathbf{w}$ 是已知的，可以直接计算它的散度，因此这是一个�
       }
   \end{tikzpicture}
 
-  \caption{场 $f$ 在模拟域上($h = 4, w = 7$)}
+  \caption{场 $f$ 在模拟域上($h = 5, w = 8$)}
 \end{figure}
 
 你一共需要存储两个场，在代码模板中已经帮你构造好了：一个速度场 $\mathbf{u}$ （每个格点上是一个二维向量），还有一个表示流体中携带颜料的颜色 $d$ （RBG 三个分量，可以认为是三个分离的标量或者一个三维向量）

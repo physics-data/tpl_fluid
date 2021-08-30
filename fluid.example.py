@@ -69,7 +69,7 @@ class Fluid:
         self.height = height
         self.width = width
 
-        # Velocity field, self.velocity[0] is the x-component, self.velocity[1] is the y-component
+        # Velocity field, self.velocity[:,:,0] is the x-component, self.velocity[:,:,1] is the y-component
         self.velocity = np.zeros((height, width, 2), dtype=np.double)
 
         # Dye density field. Has a maximum value of 1. Corresponding to RBG colors.
